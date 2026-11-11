@@ -1,10 +1,9 @@
 // -----------------------------------------------------------------------
-// Filename: screen_alternative.dart
+// Filename: screen_profile.dart
 // Original Author: Dan Grissom
 // Creation Date: 10/31/2024
 // Copyright: (c) 2024 CSC322
-// Description: This file contains the screen for a dummy alternative screen
-//               history screen.
+// Description: This file contains the profile page.
 
 //////////////////////////////////////////////////////////////////////////
 // Imports
@@ -17,23 +16,22 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
-// App relative file imports
-import '../../util/message_display/snackbar.dart';
-
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the state object.
 //////////////////////////////////////////////////////////////////////////
-class ScreenAlternate extends ConsumerStatefulWidget {
-  static const routeName = '/alternative';
+class ScreenProfile extends ConsumerStatefulWidget {
+  static const routeName = '/profile';
+
+  const ScreenProfile({super.key});
 
   @override
-  ConsumerState<ScreenAlternate> createState() => _ScreenAlternateState();
+  ConsumerState<ScreenProfile> createState() => _ScreenProfileState();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // The actual STATE which is managed by the above widget.
 //////////////////////////////////////////////////////////////////////////
-class _ScreenAlternateState extends ConsumerState<ScreenAlternate> {
+class _ScreenProfileState extends ConsumerState<ScreenProfile> {
   // The "instance variables" managed in this state
   bool _isInit = true;
 
@@ -66,18 +64,6 @@ class _ScreenAlternateState extends ConsumerState<ScreenAlternate> {
   @override
   Widget build(BuildContext context) {
     // Return the scaffold
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        shape: ShapeBorder.lerp(CircleBorder(), StadiumBorder(), 0.5),
-        onPressed: () => Snackbar.show(
-          SnackbarDisplayType.SB_INFO,
-          'You clicked the floating button on the alternate screen!',
-          context,
-        ),
-        splashColor: Theme.of(context).primaryColor,
-        child: Icon(Icons.add),
-      ),
-      body: Center(child: Text('Alternate')),
-    );
+    return Scaffold(body: Center(child: Text('Profile')));
   }
 }

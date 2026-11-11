@@ -12,15 +12,15 @@
 
 // Flutter external package imports
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import '../../screens/general/screen_alternate.dart';
+import '../../screens/general/screen_profile.dart';
 import '../../screens/general/screen_home.dart';
+import '../../screens/general/screen_book.dart';
+import '../../screens/general/screen_dining.dart';
 import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';
-import '../../main.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // Localized provider for the current tab index
@@ -32,7 +32,10 @@ class PrimaryBottomNavTabIndex extends Notifier<int> {
   void selectTab(int index) => state = index;
 }
 
-final providerPrimaryBottomNavTabIndex = NotifierProvider<PrimaryBottomNavTabIndex, int>(PrimaryBottomNavTabIndex.new);
+final providerPrimaryBottomNavTabIndex =
+    NotifierProvider<PrimaryBottomNavTabIndex, int>(
+      PrimaryBottomNavTabIndex.new,
+    );
 
 //////////////////////////////////////////////////////////////////////////
 // StateFUL widget which manages state. Simply initializes the
@@ -41,11 +44,12 @@ final providerPrimaryBottomNavTabIndex = NotifierProvider<PrimaryBottomNavTabInd
 class WidgetPrimaryScaffold extends ConsumerStatefulWidget {
   static const routeName = "/home";
 
-  const WidgetPrimaryScaffold({Key? key}) : super(key: key);
+  const WidgetPrimaryScaffold({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  ConsumerState<WidgetPrimaryScaffold> createState() => _WidgetPrimaryScaffoldState();
+  ConsumerState<WidgetPrimaryScaffold> createState() =>
+      _WidgetPrimaryScaffoldState();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,11 +58,6 @@ class WidgetPrimaryScaffold extends ConsumerStatefulWidget {
 class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // The "instance variables" managed in this state
   var _isInit = true;
-  // int _currentTabIndex = 0;
-  late Image shareImageFocus;
-  late Image shareImageLightUnfocused;
-  late Image shareImageDarkUnfocused;
-  CupertinoTabController controller = CupertinoTabController();
 
   @override
   void initState() {
@@ -69,7 +68,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // Gets the current state of the providers for consumption on
   // this page
   ////////////////////////////////////////////////////////////////////////
-  _init() async {
+  Future<void> _init() async {
     // Get providers
   }
 
@@ -89,39 +88,20 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   }
 
   ////////////////////////////////////////////////////////////////
-  // Describes menu options for the chat screen
-  ////////////////////////////////////////////////////////////////
-  List<PopupMenuEntry<String>> _getMenu() {
-    return <PopupMenuEntry<String>>[
-      //////////////////////////////////////////////////////////
-      // Edit-style options
-      //////////////////////////////////////////////////////////
-      PopupMenuItem(
-        child: Row(children: [Icon(Icons.share, size: 25), SizedBox(width: 10), Text("Share")]),
-        value: "Share",
-      ),
-      PopupMenuItem(
-        child: Row(children: [Icon(Icons.edit, size: 25), SizedBox(width: 10), Text("Rename")]),
-        value: "Rename",
-      ),
-      PopupMenuItem(
-        child: Row(children: [Icon(Icons.delete, size: 25), SizedBox(width: 10), Text("Delete")]),
-        value: "Delete",
-      ),
-    ];
-  }
-
-  ////////////////////////////////////////////////////////////////
   // Takes in the current tab index and returns the appropriate
   // screen to display.
   ////////////////////////////////////////////////////////////////
   Widget _getScreenToDisplay(int currentTabIndex) {
-    if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return ScreenHome();
-    else if (currentTabIndex == BottomNavSelection.ALTERNATE_SCREEN.index)
-      return ScreenAlternate();
-    else
-      return ScreenHome();
+    switch (BottomNavSelection.values[currentTabIndex]) {
+      case BottomNavSelection.HOME_SCREEN:
+        return ScreenHome();
+      case BottomNavSelection.BOOK_SCREEN:
+        return const ScreenBook();
+      case BottomNavSelection.DINING_SCREEN:
+        return const ScreenDining();
+      case BottomNavSelection.PROFILE_SCREEN:
+        return ScreenProfile();
+    }
   }
 
   ////////////////////////////////////////////////////////////////
@@ -129,10 +109,7 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   // app bar widget to display.
   ////////////////////////////////////////////////////////////////
   Widget _getAppBarTitle(int currentTabIndex) {
-    if (currentTabIndex == BottomNavSelection.HOME_SCREEN.index)
-      return Text("Home");
-    else
-      return Text("Alternate");
+    return Text(BottomNavSelection.values[currentTabIndex].label);
   }
 
   ////////////////////////////////////////////////////////////////
@@ -156,23 +133,29 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     // Get providers
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
 
-    // Return the scaffold
     return Scaffold(
       appBar: WidgetPrimaryAppBar(
-        // Add a plus icon followed by the 3-dots vertical icon on the right
         actionButtons: _getAppBarActions(currentTabIndex),
         title: _getAppBarTitle(currentTabIndex),
       ),
       drawer: WidgetAppDrawer(),
       body: _getScreenToDisplay(currentTabIndex),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: currentTabIndex,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         onTap: (index) {
           ref.read(providerPrimaryBottomNavTabIndex.notifier).selectTab(index);
         },
-        items: [
-          BottomNavigationBarItem(label: "Home", activeIcon: Icon(Icons.home), icon: Icon(Icons.home)),
-          BottomNavigationBarItem(label: "Alternate", activeIcon: Icon(Icons.business), icon: Icon(Icons.business)),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.book_online), label: 'Book'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant),
+            label: 'Dining',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

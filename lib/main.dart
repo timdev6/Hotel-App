@@ -18,7 +18,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 // App relative file imports
-import 'screens/general/screen_alternate.dart';
+import 'screens/general/screen_profile.dart';
 import 'screens/general/screen_home.dart';
 import 'widgets/navigation/widget_primary_scaffold.dart';
 import 'screens/auth/screen_login_validation.dart';
@@ -90,8 +90,8 @@ class _MyAppState extends ConsumerState<MyApp> {
       ),
       GoRoute(path: ScreenHome.routeName, builder: (BuildContext context, GoRouterState state) => ScreenHome()),
       GoRoute(
-        path: ScreenAlternate.routeName,
-        builder: (BuildContext context, GoRouterState state) => ScreenAlternate(),
+        path: ScreenProfile.routeName,
+        builder: (BuildContext context, GoRouterState state) => const ScreenProfile(),
       ),
     ],
   );

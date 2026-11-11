@@ -48,15 +48,17 @@ class ScreenLoginValidation extends ConsumerWidget {
       final user = authResult.asData!.value!;
       final profileResult = ref.watch(userProfileStreamProvider);
       final currentProfile = profileResult.asData?.value;
-      final hasCurrentLocalProfile = localProfile.dataLoaded &&
-          localProfile.profile.uid == user.uid;
-      final profile = currentProfile ??
+      final hasCurrentLocalProfile =
+          localProfile.dataLoaded && localProfile.profile.uid == user.uid;
+      final profile =
+          currentProfile ??
           (hasCurrentLocalProfile ? localProfile.profile : UserProfile.empty());
       final verified = user.emailVerified || authUi.emailVerified;
 
       // Permissions from Firestore are display hints only. Elevated operations
       // must also be authorized by server-side rules / custom claims.
-      if (ENFORCE_EMAIL_VERIFICATION && !verified &&
+      if (ENFORCE_EMAIL_VERIFICATION &&
+          !verified &&
           profile.permissionLevel != PermissionLevel.DEVELOPER) {
         child = const ScreenUnverifiedEmail();
       } else if (profileResult.hasError) {
@@ -88,11 +90,8 @@ class ScreenLoginValidation extends ConsumerWidget {
       }
     }
 
-    return Scaffold(
-      body: ScrollableBackground(
-        padding: loggedIn ? 0 : 20,
-        child: child,
-      ),
-    );
+    if (loggedIn) return child;
+
+    return Scaffold(body: ScrollableBackground(padding: 20, child: child));
   }
 }
