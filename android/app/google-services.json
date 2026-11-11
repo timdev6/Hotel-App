@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "33973431789",
+    "firebase_url": "https://hotel-final-project-24a8a-default-rtdb.firebaseio.com",
+    "project_id": "hotel-final-project-24a8a",
+    "storage_bucket": "hotel-final-project-24a8a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33973431789:android:cf5bd6b5ddc0d4c5538be4",
+        "android_client_info": {
+          "package_name": "com.example.hotel_final_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-NTXB21gsX7XGIQEt1wydKsuBixm7zKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
