@@ -65,8 +65,15 @@ class ScreenLoginValidation extends ConsumerWidget {
           timeOutEnabled: true,
           timeOutTextPrefix: 'Loading profile',
         );
-      } else if (profileResult.isLoading || currentProfile == null ||
-                 !hasCurrentLocalProfile) {
+      } else if (profileResult.isLoading) {
+        child = const WidgetAnnotatedLoading(
+          loadingText: 'Loading Profile...',
+          timeOutEnabled: true,
+          timeOutTextPrefix: 'Loading profile',
+        );
+      } else if (currentProfile == null) {
+        child = const ScreenProfileSetup(isAuth: true);
+      } else if (!hasCurrentLocalProfile) {
         child = const WidgetAnnotatedLoading(
           loadingText: 'Loading Profile...',
           timeOutEnabled: true,

@@ -29,6 +29,9 @@ import 'firebase_options.dart';
 import 'theme/theme.dart';
 import 'providers/provider_user_profile.dart';
 
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart';
+
 // Keep existing screens' imports of main.dart working during migration.
 export 'providers/provider_user_profile.dart';
 export 'providers/provider_auth.dart';
@@ -42,6 +45,13 @@ Future<void> main() async {
 
   // Initialize Firebase with the default options
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize Firebase App Check after Firebase is ready.
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: kDebugMode
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
+  );
 
   // Initialize the app directory
   await UtilFile.init();
