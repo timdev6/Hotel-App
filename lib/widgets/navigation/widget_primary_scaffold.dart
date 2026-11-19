@@ -19,7 +19,9 @@ import '../../screens/general/screen_profile.dart';
 import '../../screens/general/screen_home.dart';
 import '../../screens/general/screen_book.dart';
 import '../../screens/general/screen_dining.dart';
+import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';
+import '../../providers/provider_user_profile.dart';
 
 //////////////////////////////////////////////////////////////////////////
 // Localized provider for the current tab index
@@ -104,6 +106,45 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   }
 
   ////////////////////////////////////////////////////////////////
+  // Takes in the current tab index and returns the appropriate
+  // app bar widget to display.
+  ////////////////////////////////////////////////////////////////
+  Widget _getAppBarTitle(int currentTabIndex) {
+    return Text(BottomNavSelection.values[currentTabIndex].label);
+  }
+
+  ////////////////////////////////////////////////////////////////
+  // Takes in the current tab index and returns the appropriate
+  // actions to display in the app bar (right side).
+  ////////////////////////////////////////////////////////////////
+  List<Widget>? _getAppBarActions(int currentTabIndex) {
+    final profile = ref.watch(providerUserProfile).profile;
+
+    
+    final String initials =
+
+        '${profile.firstName.isNotEmpty ? profile.firstName[0] : ''}${profile.lastName.isNotEmpty ? profile.lastName[0] : ''}'
+            .toUpperCase();
+
+
+
+    return [
+      Padding(
+        padding: const EdgeInsets.only(right: 12),
+        child: GestureDetector(
+          onTap: () => ref.read(providerPrimaryBottomNavTabIndex.notifier).selectTab(3),
+          child: CircleAvatar(
+            radius: 18,
+            
+
+            child: initials.isEmpty ? const Icon(Icons.person) : Text(initials),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  ////////////////////////////////////////////////////////////////
   // Primary Flutter method overriden which describes the layout
   // and bindings for this widget.
   ////////////////////////////////////////////////////////////////
@@ -113,11 +154,13 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
 
     return Scaffold(
-      drawer: WidgetAppDrawer(),
-      body: _getScreenToDisplay(currentTabIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentTabIndex,
+      
+      appBar: WidgetPrimaryAppBar(
+        actionButtons: _getAppBarActions(currentTabIndex),
+        title: _getAppBarTitle(currentTabIndex),
+      ),
+      drawer: WidgetAppDrawer(),body: _getScreenToDisplay(currentTabIndex),bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed, currentIndex: currentTabIndex,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         onTap: (index) {
@@ -127,7 +170,9 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.book_online), label: 'Book'),
           BottomNavigationBarItem(
+            // fix before vid
             icon: Icon(Icons.restaurant),
+
             label: 'Dining',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
