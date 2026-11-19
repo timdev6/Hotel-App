@@ -15,7 +15,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/widgets.dart';
 
 // App relative file imports
-import '../../widgets/navigation/widget_primary_app_bar.dart';
 import '../../providers/provider_user_profile.dart';
 import '../../util/message_display/popup_dialogue.dart';
 import '../../util/message_display/snackbar.dart';
@@ -114,7 +113,6 @@ class _ScreenSettingsState extends ConsumerState<ScreenSettings> {
     final isDarkMode = ref.watch(providerUserProfile.select((state) => state.profile.isDarkMode));
 
     return Scaffold(
-      appBar: WidgetPrimaryAppBar(title: const Text('Settings')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

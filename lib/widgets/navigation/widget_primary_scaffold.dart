@@ -19,7 +19,6 @@ import '../../screens/general/screen_profile.dart';
 import '../../screens/general/screen_home.dart';
 import '../../screens/general/screen_book.dart';
 import '../../screens/general/screen_dining.dart';
-import 'widget_primary_app_bar.dart';
 import 'widget_app_drawer.dart';
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,26 +104,6 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
   }
 
   ////////////////////////////////////////////////////////////////
-  // Takes in the current tab index and returns the appropriate
-  // app bar widget to display.
-  ////////////////////////////////////////////////////////////////
-  Widget _getAppBarTitle(int currentTabIndex) {
-    return Text(BottomNavSelection.values[currentTabIndex].label);
-  }
-
-  ////////////////////////////////////////////////////////////////
-  // Takes in the current tab index and returns the appropriate
-  // actions to display in the app bar (right side).
-  ////////////////////////////////////////////////////////////////
-  List<Widget>? _getAppBarActions(int currentTabIndex) {
-    // Initialize the actions
-    List<Widget> actions = [];
-
-    // If not chat tab, return null (no actions)
-    return actions.isEmpty ? null : actions;
-  }
-
-  ////////////////////////////////////////////////////////////////
   // Primary Flutter method overriden which describes the layout
   // and bindings for this widget.
   ////////////////////////////////////////////////////////////////
@@ -134,10 +113,6 @@ class _WidgetPrimaryScaffoldState extends ConsumerState<WidgetPrimaryScaffold> {
     final currentTabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
 
     return Scaffold(
-      appBar: WidgetPrimaryAppBar(
-        actionButtons: _getAppBarActions(currentTabIndex),
-        title: _getAppBarTitle(currentTabIndex),
-      ),
       drawer: WidgetAppDrawer(),
       body: _getScreenToDisplay(currentTabIndex),
       bottomNavigationBar: BottomNavigationBar(
