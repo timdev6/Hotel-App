@@ -1,97 +1,93 @@
-// -----------------------------------------------------------------------
-// Filename: screen_home.dart
-// Original Author: Dan Grissom
-// Creation Date: 10/31/2024
-// Copyright: (c) 2024 CSC322
-// Description: This file contains the primary app bar.
-
-//////////////////////////////////////////////////////////////////////////
-// Imports
-//////////////////////////////////////////////////////////////////////////
-// Flutter imports
-
-// Flutter external package imports
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// App relative file imports
-import '../../util/message_display/snackbar.dart';
-import '../../theme/colors.dart';
+import '../../providers/provider_user_profile.dart';
+import '../../screens/general/screen_book.dart';
+import '../../screens/general/screen_dining.dart';
+import '../../screens/general/screen_home.dart';
+import '../../screens/general/screen_profile.dart';
+import 'widget_app_drawer.dart';
+import 'widget_primary_app_bar.dart';
 
-class WidgetPrimaryAppBar extends ConsumerStatefulWidget
-    implements PreferredSizeWidget {
-  // Constant parameters passedin
-  final Widget title;
-  final List<Widget>? actionButtons;
-  final bool inCurrentMeeting;
-
-  const WidgetPrimaryAppBar({
-    super.key,
-    required this.title,
-    this.actionButtons,
-    this.inCurrentMeeting = false,
-  });
-  // UserData().updateProfileImage();
-
+class PrimaryBottomNavTabIndex extends Notifier<int> {
   @override
-  ConsumerState<WidgetPrimaryAppBar> createState() => _PrimaryAppBar();
+  int build() => 0;
 
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  void selectTab(int index) => state = index;
 }
 
-//////////////////////////////////////////////////////////////////
-// The actual STATE which is managed by the above widget.
-//////////////////////////////////////////////////////////////////
-class _PrimaryAppBar extends ConsumerState<WidgetPrimaryAppBar> {
-  // The "instance variables" managed in this state
-  var _isInit = true;
+final providerPrimaryBottomNavTabIndex =
+    NotifierProvider<PrimaryBottomNavTabIndex, int>(
+      PrimaryBottomNavTabIndex.new,
+    );
 
-  ////////////////////////////////////////////////////////////////
-  // Gets the current state of the providers for consumption on
-  // this page
-  ////////////////////////////////////////////////////////////////
-  Future<void> _init() async {
-    // Get providers
-  }
+class WidgetPrimaryScaffold extends ConsumerWidget {
+  static const routeName = '/home';
 
-  ////////////////////////////////////////////////////////////////
-  // Runs the following code once upon initialization
-  ////////////////////////////////////////////////////////////////
-  @override
-  void didChangeDependencies() {
-    // If first time running this code, update provider settings
-    if (_isInit) {
-      _init();
+  const WidgetPrimaryScaffold({super.key});
+
+  Widget _screenFor(BottomNavSelection selection) {
+    switch (selection) {
+      case BottomNavSelection.HOME_SCREEN:
+        return ScreenHome();
+      case BottomNavSelection.BOOK_SCREEN:
+        return const ScreenBook();
+      case BottomNavSelection.DINING_SCREEN:
+        return const ScreenDining();
+      case BottomNavSelection.PROFILE_SCREEN:
+        return const ScreenProfile();
     }
-
-    // Now initialized; run super method
-    _isInit = false;
-
-    super.didChangeDependencies();
   }
 
-  ////////////////////////////////////////////////////////////////
-  // Primary Flutter method overriden which describes the layout
-  // and bindings for this widget.
-  ////////////////////////////////////////////////////////////////
   @override
-  Widget build(BuildContext context) {
-    
-    // add more when home
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tabIndex = ref.watch(providerPrimaryBottomNavTabIndex);
+    final profile = ref.watch(providerUserProfile).profile;
+    final initials =
+        '${profile.firstName.isNotEmpty ? profile.firstName[0] : ''}'
+        '${profile.lastName.isNotEmpty ? profile.lastName[0] : ''}'
+            .toUpperCase();
 
-    return AppBar(
-      title: widget.title,
-
-      elevation: 0,
-
-      actions: [
-        if (widget.actionButtons != null)
-          ...widget.actionButtons!.map((e) {
-            return e;
-          }).toList(),
-
-      ],
+    return Scaffold(
+      appBar: WidgetPrimaryAppBar(
+        title: Text(BottomNavSelection.values[tabIndex].label),
+        actionButtons: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: GestureDetector(
+              onTap: () => ref
+                  .read(providerPrimaryBottomNavTabIndex.notifier)
+                  .selectTab(BottomNavSelection.PROFILE_SCREEN.index),
+              child: CircleAvatar(
+                radius: 18,
+                child: initials.isEmpty
+                    ? const Icon(Icons.person)
+                    : Text(initials),
+              ),
+            ),
+          ),
+        ],
+      ),
+      drawer: WidgetAppDrawer(),
+      body: _screenFor(BottomNavSelection.values[tabIndex]),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: tabIndex,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        onTap: (index) => ref
+            .read(providerPrimaryBottomNavTabIndex.notifier)
+            .selectTab(index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.book_online), label: 'Book'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant),
+            label: 'Dining',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
     );
   }
 }
